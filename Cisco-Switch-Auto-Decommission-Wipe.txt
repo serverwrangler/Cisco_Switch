@@ -1,0 +1,23 @@
+conf t
+! Working script thus far to decommission a switch from service
+! and prepare it for surplus
+! 06152021 - zww - OITNG
+! Use at your own risk :-P
+event manager applet WIPE authorization bypass
+ event none sync yes maxrun 300
+ action 1.0 cli command "term length 0"
+ action 1.1 cli command "enable"
+ action 2.0 syslog msg "Wiping device for decommission"
+ action 3.0 cli command "write erase" pattern "\[confirm\]"
+ action 3.1 cli command "y"
+ action 4.0 syslog msg "Removing Vlan database"
+ action 4.1 cli command "delete /force flash:/vlan.dat"
+ action 4.2 syslog msg "Removing backup and archived config files"
+ action 4.3 cli command "delete /force flash:/config.text*"
+ action 4.4 cli command "delete /force flash:/archived-*"
+ action 4.5 cli command "delete /force flash:/private-*"
+ action 5.0 syslog msg "Reloading device to wipe for decommission"
+ action 5.1 reload
+!
+end
+event manager run WIPE
