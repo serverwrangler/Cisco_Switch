@@ -1,0 +1,87 @@
+#########################################
+## CISCO Catalyst Command Reference
+#########################################
+#termial command history
+show history
+
+#show details on interface
+show interfaces gigabitEthernet 1/0/5
+
+#show portsec details on interface
+show port-security interface gigabitEthernet 1/0/5
+
+#show the device's mac on port
+show mac address-table interface gigabitEthernet 1/0/5
+
+#Show current config for port 
+show running-config interface gigabitEthernet 1/0/5
+
+#show all interfaces and Descriptions
+show interfaces description
+
+#show all interfaces with a description that matches regex
+#Search for room jack number
+show interfaces description | include ^JACK
+#search for wireless access points
+show interfaces description | include WA
+
+#Shows which local ports are involved in the errdisabled state.
+show interfaces status err-disabled
+#Shows the time period after which the interfaces are enabled for errdisable conditions.
+show errdisable recovery
+#Shows the reason for the errdisable status.
+show errdisable detect
+
+#Show mab events on a given interface
+show mab interface gigabitEthernet 1/0/5 details
+
+#Show current authentication events
+show authentication sessions 
+
+#Show port auth events
+show authentication sessions interface gigabitEthernet 1/0/5
+Interface                MAC Address    Method  Domain  Status Fg  Session ID
+--------------------------------------------------------------------------------------------
+Gi1/0/5                  e826.89c0.f0ec N/A     UNKNOWN Auth        3200500A0000276CD3B09992
+
+
+#Show all configured radisu servers
+show radius server-group all
+
+#Show ports that are shutdown err-disabled
+show port-security
+
+
+#Perform Factory Reset
+#Prep to send to surplus
+erase startup-config
+erase nvram:
+delete vlan.dat
+delete /force flash:archived-config
+#OR Press and hold the mode button on powerup until the <switch:> is shown
+flash_init
+del flash:config.text
+del flash:vlan.dat
+del flash:private-config.text
+del flash:config.text.backup
+boot
+
+#Recovery console
+#Press and hold the mode button on powerup
+flash_init
+rename flash:config.text flash:config.old
+boot
+
+#####################
+#Firmware upgrades
+#####################
+#Cisco Switch 9300 16.6.8 Install
+copy usbflash0:cat9k_iosxe.16.06.08.SPA.bin flash:
+
+#Cisco Switch Explode 9300 16.6.8
+request platform software package install switch all file flash:cat9k_iosxe.16.06.08.SPA.bin
+
+#Cisco Switch 9300 Software Clean
+request platform software package clean switch all
+
+
